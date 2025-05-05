@@ -1,0 +1,12 @@
+POST http://localhost:5555/books
+Content-Type: application/json
+
+{
+    "title": "ESV Study Bible",
+    "author": "Crossway",
+    "publishYear": "1987"
+}
+
+###
+GET http://localhost:5555/books/681942866ab0c88a091b7118
+

@@ -1,16 +1,86 @@
 import express from "express";
 import { PORT, mongodbURL } from "./config.js"
 import mongoose from "mongoose"
+import { Book } from './models/bookModel.js'
 const app = express()
+
+app.use(express.json());
 
 app.get('/', (req, res, next) => {
 
 });
+// Create Book in DB
+app.post('/books', async(req, res, next) => {
+    try {
+        // Check all fields
+        if (
+            !req.body.title ||
+            !req.body.author ||
+            !req.body.publishYear
+        ) {
+            return res.status(400).send({ message: 'Send all required fields!' })
+        }
+        const newBook = {
+            title: req.body.title,
+            author: req.body.author,
+            publishYear: req.body.publishYear
+        }
+        // Create book
+        const book = await Book.create(newBook)
+        return res.status(201).json(book)
+    } catch (err) {
+        res.status(500).send({ message: err.message})
+    }
+})
+
+// Get all books from DB
+app.get('/books', async (req, res, next) => {
+    try {
+        const books = await Book.find({})
+        res.status(200).json({
+            count: books.length,
+            data: books
+        })
+    } catch (err) {
+        res.status(500).send({ message: err.message})
+    }
+});
+
+// Get one book from DB
+app.get('/books/:id', getBook, async (req, res, next) => {
+    res.json(res.book)
+})
+
+// Update book in DB
+app.patch('/books/:id', (req, res, next) => {
+
+})
+
+// Delete book from DB
+app.delete('/books/:id', (req, res, next) => {
+
+})
+
+// Get book by Id
+async function getBook(req, res, next) {
+    let book
+    try {
+        book = await Book.findById(req.params.id)
+        if (!book) {
+            return res.status(404).json({ message: 'Cannot find book' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+    res.book = book
+    next()
+}
 
 app.listen(PORT, () => {
     console.log(`App listening on port: ${PORT}`)
 })
 
+// Mongoose connection
 mongoose.connect(mongodbURL)
 const db = mongoose.connection
 db.on('error', (error) => console.error(error))
