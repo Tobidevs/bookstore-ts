@@ -1,12 +1,16 @@
 import express from "express";
 import { PORT, mongodbURL } from "./config.js"
 import mongoose from "mongoose"
-import { Book }from './models/bookModel.js'
+import cors from 'cors'
 import { booksRouter } from './routes/booksRoutes.js'
 const app = express()
 
 app.use(express.json());
 
+// Middleware for handling CORS policy 
+app.use(cors())
+
+// Route all /books requests to booksRouter
 app.use('/books', booksRouter)
 
 
