@@ -52,8 +52,22 @@ app.get('/books/:id', getBook, async (req, res, next) => {
 })
 
 // Update book in DB
-app.patch('/books/:id', (req, res, next) => {
-
+app.patch('/books/:id', getBook, async (req, res, next) => {
+    if (req.body.title != null) {
+        res.book.title = req.body.title
+    }
+    if (req.body.author != null) {
+        res.book.author = req.body.author
+    }
+    if (req.body.publishYear != null) {
+        res.book.publishYear = req.body.publishYear
+    }
+    try {
+        const updatedBook = await res.book.save()
+        res.status(200).json(updatedBook)
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
 })
 
 // Delete book from DB
