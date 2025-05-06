@@ -6,9 +6,6 @@ const app = express()
 
 app.use(express.json());
 
-app.get('/', (req, res, next) => {
-
-});
 // Create Book in DB
 app.post('/books', async(req, res, next) => {
     try {
@@ -71,8 +68,13 @@ app.patch('/books/:id', getBook, async (req, res, next) => {
 })
 
 // Delete book from DB
-app.delete('/books/:id', (req, res, next) => {
-
+app.delete('/books/:id', getBook, async (req, res, next) => {
+    try {
+        await res.book.deleteOne()
+        res.json({ message: 'Deleted Book' })
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
 })
 
 // Get book by Id
